@@ -30,5 +30,5 @@ Powered by ASPlaceholderTextView and PMKVObserver
     s.source_files = 'Pod/Source/**/*'
     s.frameworks = 'UIKit'
     s.dependency 'ASPlaceholderTextView', '~> 0.1'
-    s.dependency 'PMKVObserver', '~> 1.0'
+    s.dependency 'PMKVObserver', '~> 2.0’
 end
