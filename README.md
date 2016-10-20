@@ -12,6 +12,10 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'ASTextInputAccessoryView', :git => 'https://github.com/davidseek/ASTextInputAccessoryView.git'
+
+als you need to put:
+
+pod 'ASPlaceholderTextView', :git => 'https://github.com/davidseek/ASPlaceholderTextView.git'
 ```
 
 ## Author
