@@ -18,7 +18,7 @@ Set as your chat ViewController's inputAccessoryView for a customizable and auto
 Powered by ASPlaceholderTextView and PMKVObserver
                        DESC
 
-    s.homepage         = "https://github.com/ashare80/ASTextInputAccessoryView"
+    s.homepage         = "https://github.com/davidseek/ASTextInputAccessoryView"
     s.license          = 'MIT'
     s.author           = { "Adam Share" => "ashare80@gmail.com" }
     s.source           = { :git => "https://github.com/davidseek/ASTextInputAccessoryView.git", :tag => s.version.to_s }
