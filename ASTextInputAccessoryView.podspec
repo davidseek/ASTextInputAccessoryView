@@ -21,7 +21,7 @@ Powered by ASPlaceholderTextView and PMKVObserver
     s.homepage         = "https://github.com/ashare80/ASTextInputAccessoryView"
     s.license          = 'MIT'
     s.author           = { "Adam Share" => "ashare80@gmail.com" }
-    s.source           = { :git => "https://github.com/ashare80/ASTextInputAccessoryView.git", :tag => s.version.to_s }
+    s.source           = { :git => "https://github.com/davidseek/ASTextInputAccessoryView.git", :tag => s.version.to_s }
     s.social_media_url = 'https://twitter.com/adamshare'
 
     s.platform     = :ios, '8.0'
