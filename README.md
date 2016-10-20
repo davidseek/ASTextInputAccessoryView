@@ -17,7 +17,7 @@ ASTextInputAccessoryView is available through [CocoaPods](http://cocoapods.org).
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "ASTextInputAccessoryView"
+pod 'ASTextInputAccessoryView', :git => 'https://github.com/davidseek/ASTextInputAccessoryView.git'
 ```
 
 ## Author
