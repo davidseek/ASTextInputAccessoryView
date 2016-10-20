@@ -11,24 +11,24 @@ import UIKit
 
 extension UICollectionView {
     
-    public var lastIndexPath: NSIndexPath? {
+    public var lastIndexPath: IndexPath? {
         
         guard
-            let numberOfSections = dataSource?.numberOfSectionsInCollectionView?(self),
+            let numberOfSections = dataSource?.numberOfSections?(in: self),
             let numberOfItems = dataSource?.collectionView(self, numberOfItemsInSection: numberOfSections - 1)
-            where numberOfItems > 0 else {
+            , numberOfItems > 0 else {
                 return nil
         }
         
-        return NSIndexPath(forItem: numberOfItems - 1, inSection: numberOfSections - 1)
+        return IndexPath(item: numberOfItems - 1, section: numberOfSections - 1)
     }
     
-    func scrollToLastCell(atScrollPosition: UICollectionViewScrollPosition = .None, animated: Bool = true) {
+    func scrollToLastCell(_ atScrollPosition: UICollectionViewScrollPosition = UICollectionViewScrollPosition(), animated: Bool = true) {
         
         guard let lastIndexPath = lastIndexPath else {
             return
         }
         
-        scrollToItemAtIndexPath(lastIndexPath, atScrollPosition: atScrollPosition, animated: animated)
+        scrollToItem(at: lastIndexPath, at: atScrollPosition, animated: animated)
     }
 }

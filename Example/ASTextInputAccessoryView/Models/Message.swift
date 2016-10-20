@@ -12,7 +12,7 @@ import Foundation
 class Message: Equatable {
     
     var text: String?
-    var date: NSDate = NSDate()
+    var date: Date = Date()
     var user: User!
     
     init() {

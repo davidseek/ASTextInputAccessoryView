@@ -13,6 +13,6 @@ import Foundation
 public extension CGFloat {
     
     var roundToNearestHalf: CGFloat {
-        return round(self * 2)/2
+        return (self * 2).rounded()/2
     }
 }

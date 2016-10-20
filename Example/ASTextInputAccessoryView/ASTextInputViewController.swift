@@ -23,7 +23,7 @@ class ASTextInputViewController: UIViewController {
         
         let photoComponent = UINib
             .init(nibName: "PhotosComponentView", bundle: nil)
-            .instantiateWithOwner(self, options: nil)
+            .instantiate(withOwner: self, options: nil)
             .first as! PhotosComponentView
         iaView = ASResizeableInputAccessoryView(components: [messageView, photoComponent])
         iaView.delegate = self
@@ -34,14 +34,14 @@ class ASTextInputViewController: UIViewController {
         updateInsets(iaView.contentViewHeightConstraint.constant)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         collectionView.reloadData()
         collectionView.scrollToBottomContent(false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //        Test layout of changed parameters after setup
         //        changeAppearance()
@@ -51,7 +51,7 @@ class ASTextInputViewController: UIViewController {
     func changeAppearance() {
         messageView.minimumHeight = 60
         messageView.margin = 3
-        messageView.font = UIFont.boldSystemFontOfSize(30)
+        messageView.font = UIFont.boldSystemFont(ofSize: 30)
     }
 }
 
@@ -62,15 +62,15 @@ extension ASTextInputViewController {
     }
     
     // IMPORTANT Allows input view to stay visible
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder : Bool {
         return true
     }
     
     // Handle Rotation
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         
-        coordinator.animateAlongsideTransition({ (context) in
+        coordinator.animate(alongsideTransition: { (context) in
             self.messageView.textView.layoutIfNeeded()
             }) { (context) in
                 self.iaView.reloadHeight()
@@ -82,14 +82,14 @@ extension ASTextInputViewController {
 // MARK: ASResizeableInputAccessoryViewDelegate
 extension ASTextInputViewController: ASResizeableInputAccessoryViewDelegate {
     
-    func updateInsets(bottom: CGFloat) {
+    func updateInsets(_ bottom: CGFloat) {
         var contentInset = collectionView.contentInset
         contentInset.bottom = bottom
         collectionView.contentInset = contentInset
         collectionView.scrollIndicatorInsets = contentInset
     }
     
-    func inputAccessoryViewWillAnimateToHeight(view: ASResizeableInputAccessoryView, height: CGFloat, keyboardHeight: CGFloat) -> (() -> Void)? {
+    func inputAccessoryViewWillAnimateToHeight(_ view: ASResizeableInputAccessoryView, height: CGFloat, keyboardHeight: CGFloat) -> (() -> Void)? {
         
         return { [weak self] in
             self?.updateInsets(keyboardHeight)
@@ -97,20 +97,20 @@ extension ASTextInputViewController: ASResizeableInputAccessoryViewDelegate {
         }
     }
     
-    func inputAccessoryViewKeyboardWillPresent(view: ASResizeableInputAccessoryView, height: CGFloat) -> (() -> Void)? {
+    func inputAccessoryViewKeyboardWillPresent(_ view: ASResizeableInputAccessoryView, height: CGFloat) -> (() -> Void)? {
         return { [weak self] in
             self?.updateInsets(height)
             self?.collectionView.scrollToBottomContent(false)
         }
     }
     
-    func inputAccessoryViewKeyboardWillDismiss(view: ASResizeableInputAccessoryView, notification: NSNotification) -> (() -> Void)? {
+    func inputAccessoryViewKeyboardWillDismiss(_ view: ASResizeableInputAccessoryView, notification: Notification) -> (() -> Void)? {
         return { [weak self] in
             self?.updateInsets(view.frame.size.height)
         }
     }
     
-    func inputAccessoryViewKeyboardDidChangeHeight(view: ASResizeableInputAccessoryView, height: CGFloat) {
+    func inputAccessoryViewKeyboardDidChangeHeight(_ view: ASResizeableInputAccessoryView, height: CGFloat) {
         let shouldScroll = collectionView.isScrolledToBottom
         updateInsets(height)
         if shouldScroll {
@@ -124,37 +124,37 @@ extension ASTextInputViewController: ASResizeableInputAccessoryViewDelegate {
 // MARK: Actions
 extension ASTextInputViewController {
     
-    @IBAction func dismissKeyboard(sender: AnyObject) {
+    @IBAction func dismissKeyboard(_ sender: AnyObject) {
         self.messageView.textView.resignFirstResponder()
     }
     
     func addCameraButton() {
         
-        let cameraButton = UIButton(type: .Custom)
-        let image = UIImage(named: "camera")?.imageWithRenderingMode(.AlwaysTemplate)
-        cameraButton.setImage(image, forState: .Normal)
-        cameraButton.tintColor = UIColor.grayColor()
+        let cameraButton = UIButton(type: .custom)
+        let image = UIImage(named: "camera")?.withRenderingMode(.alwaysTemplate)
+        cameraButton.setImage(image, for: UIControlState())
+        cameraButton.tintColor = UIColor.gray
         
         messageView.leftButton = cameraButton
         
         let width = NSLayoutConstraint(
             item: cameraButton,
-            attribute: .Width,
-            relatedBy: .Equal,
+            attribute: .width,
+            relatedBy: .equal,
             toItem: nil,
-            attribute: .NotAnAttribute,
+            attribute: .notAnAttribute,
             multiplier: 1,
             constant: 40
         )
         cameraButton.superview?.addConstraint(width)
         
-        cameraButton.addTarget(self, action: #selector(self.showPictures), forControlEvents: .TouchUpInside)
+        cameraButton.addTarget(self, action: #selector(self.showPictures), for: .touchUpInside)
     }
     
     func showPictures() {
         
         PHPhotoLibrary.requestAuthorization { (status) in
-            NSOperationQueue.mainQueue().addOperationWithBlock({
+            OperationQueue.main.addOperation({
                 if let photoComponent = self.iaView.components[1] as? PhotosComponentView {
                     self.iaView.selectedComponent = photoComponent
                     photoComponent.getPhotoLibrary()

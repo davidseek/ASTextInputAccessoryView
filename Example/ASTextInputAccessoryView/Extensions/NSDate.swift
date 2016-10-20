@@ -11,21 +11,21 @@ import Foundation
 extension NSDate {
     
     var headerFormattedString: String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         let template = "MMM dd, hh:mm"
-        let locale = NSLocale.currentLocale()
-        let format = NSDateFormatter.dateFormatFromTemplate(template, options:0, locale:locale)
+        let locale = Locale.current
+        let format = DateFormatter.dateFormat(fromTemplate: template, options:0, locale:locale)
         
         dateFormatter.setLocalizedDateFormatFromTemplate(format!)
         
-        var dateTimeString = dateFormatter.stringFromDate(self)
+        var dateTimeString = dateFormatter.string(from: self as Date)
         
-        if NSCalendar.currentCalendar().isDateInToday(self) {
+        if Calendar.current.isDateInToday(self as Date) {
             dateTimeString = "Today, " + dateTimeString
         }
         else {
             dateFormatter.setLocalizedDateFormatFromTemplate("EEE")
-            let weekDay = dateFormatter.stringFromDate(self)
+            let weekDay = dateFormatter.string(from: self as Date)
             dateTimeString = weekDay + ", " + dateTimeString
         }
         

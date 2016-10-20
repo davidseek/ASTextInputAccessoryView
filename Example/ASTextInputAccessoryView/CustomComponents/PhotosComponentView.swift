@@ -18,34 +18,34 @@ class PhotosComponentView: UIView {
     @IBOutlet weak var collectionView: UICollectionView!
     
     @IBOutlet weak var searchBar: UISearchBar!
-    @IBAction func selectButton(sender: UIButton) {
+    @IBAction func selectButton(_ sender: UIButton) {
         
-        sender.selected = !sender.selected
-        if !sender.selected {
+        sender.isSelected = !sender.isSelected
+        if !sender.isSelected {
             reset()
         }
         else {
             collectionView.allowsMultipleSelection = true
-            closeButton.setTitle("Done", forState: .Normal)
-            UIView.animateWithDuration(0.2, animations: {
+            closeButton.setTitle("Done", for: UIControlState())
+            UIView.animate(withDuration: 0.2, animations: {
                 self.layoutIfNeeded()
             })
         }
     }
     
-    var assets: PHFetchResult?
+    var assets: PHFetchResult<PHAsset>!
     
     var selectedAssets: [PHAsset] = []
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        collectionView.registerClass(ImageCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: "Cell")
         collectionView.dataSource = self
         collectionView.delegate = self
         
         collectionView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        collectionView.layer.shadowColor = UIColor.blackColor().CGColor
+        collectionView.layer.shadowColor = UIColor.black.cgColor
         collectionView.layer.shadowOpacity = 0.2
         collectionView.layer.shadowRadius = 2
     }
@@ -61,12 +61,12 @@ extension PhotosComponentView: ASComponent {
         return searchBar
     }
     
-    func animatedLayout(newheight: CGFloat) {
+    func animatedLayout(_ newheight: CGFloat) {
         collectionView.collectionViewLayout.invalidateLayout()
         collectionView.reloadData()
     }
     
-    func postAnimationLayout(newheight: CGFloat) {
+    func postAnimationLayout(_ newheight: CGFloat) {
         collectionView.collectionViewLayout.invalidateLayout()
     }
 }
@@ -74,28 +74,28 @@ extension PhotosComponentView: ASComponent {
 extension PhotosComponentView {
     
     func reset() {
-        selectButton.selected = false
+        selectButton.isSelected = false
         selectedAssets = []
         collectionView.allowsMultipleSelection = false
-        closeButton.setTitle("X", forState: .Normal)
-        UIView.animateWithDuration(0.2, animations: {
+        closeButton.setTitle("X", for: UIControlState())
+        UIView.animate(withDuration: 0.2, animations: {
             self.layoutIfNeeded()
         })
     }
     
-    @IBAction func close(sender: AnyObject) {
+    @IBAction func close(_ sender: AnyObject) {
         
         var shouldBecomeFirstResponder = false
         if selectedAssets.count > 0 {
             for asset in selectedAssets {
                 let options = PHImageRequestOptions()
-                options.synchronous = true
-                options.deliveryMode = .HighQualityFormat
-                let m = PHImageManager.defaultManager()
-                m.requestImageForAsset(
-                    asset,
-                    targetSize: UIScreen.mainScreen().bounds.size,
-                    contentMode: .Default,
+                options.isSynchronous = true
+                options.deliveryMode = .highQualityFormat
+                let m = PHImageManager.default()
+                m.requestImage(
+                    for: asset,
+                    targetSize: UIScreen.main.bounds.size,
+                    contentMode: PHImageContentMode(rawValue: 1)!,
                     options: options
                 ) { [weak self] (image, info) in
                     guard let image = image else {
@@ -112,7 +112,7 @@ extension PhotosComponentView {
         let component = parentView?.components.first
         parentView?.selectedComponent = component
         reset()
-        collectionView.contentOffset = CGPointZero
+        collectionView.contentOffset = CGPoint.zero
         if shouldBecomeFirstResponder {
             (component?.textInputView as? UIView)?.becomeFirstResponder()
         }
@@ -126,7 +126,7 @@ extension PhotosComponentView {
     func getPhotoLibrary() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        self.assets = PHAsset.fetchAssetsWithMediaType(.Image, options: fetchOptions)
+        self.assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         self.collectionView.reloadData()
     }
 }
@@ -134,11 +134,11 @@ extension PhotosComponentView {
 
 extension PhotosComponentView: UICollectionViewDataSource {
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         guard let assets = assets else {
             return 0
@@ -147,12 +147,12 @@ extension PhotosComponentView: UICollectionViewDataSource {
         return assets.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as! ImageCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageCell
         
-        cell.asset = assets?[indexPath.item] as? PHAsset
-        cell.selected = selectedAssets.contains(cell.asset!)
+        cell.asset = assets?[(indexPath as NSIndexPath).item]
+        cell.isSelected = selectedAssets.contains(cell.asset!)
         
         return cell
     }
@@ -161,10 +161,10 @@ extension PhotosComponentView: UICollectionViewDataSource {
 
 class ImageCell: UICollectionViewCell {
     
-    override var selected: Bool {
+    override var isSelected: Bool {
         didSet {
-            if selected {
-                imageView.layer.borderColor = tintColor.CGColor
+            if isSelected {
+                imageView.layer.borderColor = tintColor.cgColor
                 imageView.layer.borderWidth = 4
             }
             else {
@@ -178,18 +178,18 @@ class ImageCell: UICollectionViewCell {
         didSet {
             imageView.image = nil
             if let asset = asset {
-                let manager = PHImageManager.defaultManager()
+                let manager = PHImageManager.default()
                 
                 cancelRequest()
                 
-                requestID = manager.requestImageForAsset(
-                    asset,
+                requestID = manager.requestImage(
+                    for: asset,
                     targetSize: frame.size,
-                    contentMode: .Default,
+                    contentMode: PHImageContentMode(rawValue: 1)!,
                     options: nil
                 ) { [weak self] (image, info) in
                     guard let id = info?[PHImageResultRequestIDKey] as? NSNumber
-                        where PHImageRequestID(id.integerValue) == self?.requestID ||
+                        , PHImageRequestID(id.intValue) == self?.requestID ||
                             self?.requestID == 0  else {
                         return
                     }
@@ -200,7 +200,7 @@ class ImageCell: UICollectionViewCell {
     }
     func cancelRequest() {
         if requestID != 0 {
-            PHImageManager.defaultManager().cancelImageRequest(requestID)
+            PHImageManager.default().cancelImageRequest(requestID)
             requestID = 0
         }
     }
@@ -219,32 +219,33 @@ class ImageCell: UICollectionViewCell {
     
     func setupViews() {
         contentView.addSubview(imageView)
-        imageView.autoLayoutToSuperview()
-        imageView.contentMode = .ScaleAspectFill
+        let constraints = imageView.autoLayoutToSuperview()
+        NSLayoutConstraint.activate(constraints)
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor.whiteColor()
+        imageView.backgroundColor = UIColor.white
     }
 }
 
 
 extension PhotosComponentView: UICollectionViewDelegate {
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let asset = assets![indexPath.item] as! PHAsset
+        let asset = assets![(indexPath as NSIndexPath).item]
         
-        if selectButton.selected {
+        if selectButton.isSelected {
             selectedAssets.append(asset)
             return
         }
         let options = PHImageRequestOptions()
-        options.synchronous = true
-        options.deliveryMode = .HighQualityFormat
-        let m = PHImageManager.defaultManager()
-        m.requestImageForAsset(
-            asset,
-            targetSize: UIScreen.mainScreen().bounds.size,
-            contentMode: .Default,
+        options.isSynchronous = true
+        options.deliveryMode = .highQualityFormat
+        let m = PHImageManager.default()
+        m.requestImage(
+            for: asset,
+            targetSize: UIScreen.main.bounds.size,
+            contentMode: PHImageContentMode(rawValue: 1)!,
             options: options
         ) { [weak self] (image, info) in
             guard let image = image else {
@@ -257,11 +258,11 @@ extension PhotosComponentView: UICollectionViewDelegate {
         }
     }
     
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
-        if let asset = assets![indexPath.item] as? PHAsset,
-            let index = selectedAssets.indexOf(asset) {
-            selectedAssets.removeAtIndex(index)
+        if let asset = assets?[(indexPath as NSIndexPath).item],
+            let index = selectedAssets.index(of: asset) {
+            selectedAssets.remove(at: index)
         }
     }
 }
@@ -275,7 +276,7 @@ extension PhotosComponentView: UICollectionViewDelegateFlowLayout {
         collectionView.collectionViewLayout.invalidateLayout()
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.size.height, height: collectionView.frame.size.height)
     }
 }

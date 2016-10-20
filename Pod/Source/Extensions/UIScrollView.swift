@@ -11,9 +11,9 @@ import UIKit
 
 public extension UIScrollView {
     
-    func scrollToBottomContent(animated: Bool = true) {
+    func scrollToBottomContent(_ animated: Bool = true) {
         let bottom = bottomOffset
-        if !CGPointEqualToPoint(bottom, contentOffset) {
+        if !bottom.equalTo(contentOffset) {
             setContentOffset(bottom, animated: animated)
         }
     }

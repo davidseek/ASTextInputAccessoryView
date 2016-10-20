@@ -8,6 +8,26 @@
 
 import Foundation
 import UIKit
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
 
 //MARK: - Layout Guides
 
@@ -15,7 +35,7 @@ public extension UIViewController {
     
     public var topBarHeight: CGFloat {
         
-        var topHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+        var topHeight = UIApplication.shared.statusBarFrame.size.height
         if let height = navigationController?.navigationBar.frame.size.height {
             topHeight += height
         }
@@ -68,11 +88,11 @@ public extension UIViewController {
     
     class var topViewController: UIViewController {
         
-        let rootViewController = UIApplication.sharedApplication().delegate!.window!!.rootViewController
+        let rootViewController = UIApplication.shared.delegate!.window!!.rootViewController
         return topViewControllerWithRootViewController(rootViewController!)
     }
     
-    class func topViewControllerWithRootViewController(rootViewController: UIViewController) -> UIViewController {
+    class func topViewControllerWithRootViewController(_ rootViewController: UIViewController) -> UIViewController {
         // Handling UITabBarController
         
         if let rootViewController = rootViewController as? UITabBarController, let selected = rootViewController.selectedViewController {

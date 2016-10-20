@@ -19,29 +19,29 @@ public extension NSObject {
     
     func addKeyboardNotificationsShow() {
         addNotificationSelectors([
-            UIKeyboardWillShowNotification: #selector(self.keyboardWillShow(_:)),
-            UIKeyboardDidShowNotification: #selector(self.keyboardDidShow(_:))
+            NSNotification.Name.UIKeyboardWillShow.rawValue: #selector(self.keyboardWillShow(_:)),
+            NSNotification.Name.UIKeyboardDidShow.rawValue: #selector(self.keyboardDidShow(_:))
             ])
     }
     
     func addKeyboardNotificationsHide() {
         addNotificationSelectors([
-            UIKeyboardWillHideNotification: #selector(self.keyboardWillHide(_:)),
-            UIKeyboardDidHideNotification: #selector(self.keyboardDidHide(_:))
+            NSNotification.Name.UIKeyboardWillHide.rawValue: #selector(self.keyboardWillHide(_:)),
+            NSNotification.Name.UIKeyboardDidHide.rawValue: #selector(self.keyboardDidHide(_:))
             ])
     }
     
     func addKeyboardNotificationsChangeFrame() {
         addNotificationSelectors([
-            UIKeyboardWillChangeFrameNotification: #selector(self.keyboardWillChangeFrame(_:)),
-            UIKeyboardDidChangeFrameNotification: #selector(self.keyboardDidChangeFrame(_:))
+            NSNotification.Name.UIKeyboardWillChangeFrame.rawValue: #selector(self.keyboardWillChangeFrame(_:)),
+            NSNotification.Name.UIKeyboardDidChangeFrame.rawValue: #selector(self.keyboardDidChangeFrame(_:))
             ])
     }
     
-    func addNotificationSelectors(keyedSelectors: [String: Selector]) {
-        let nc = NSNotificationCenter.defaultCenter()
+    func addNotificationSelectors(_ keyedSelectors: [String: Selector]) {
+        let nc = NotificationCenter.default
         for (name, selector) in keyedSelectors {
-            nc.addObserver(self, selector: selector, name: name, object: nil)
+            nc.addObserver(self, selector: selector, name: NSNotification.Name(rawValue: name), object: nil)
         }
     }
     
@@ -53,33 +53,33 @@ public extension NSObject {
     
     func removeKeyboardNotificationsHide() {
         removeNotificationNames(
-            [UIKeyboardWillHideNotification, UIKeyboardDidHideNotification]
+            [NSNotification.Name.UIKeyboardWillHide.rawValue, NSNotification.Name.UIKeyboardDidHide.rawValue]
         )
     }
     
     func removeKeyboardNotificationsShow() {
         removeNotificationNames(
-            [UIKeyboardWillShowNotification, UIKeyboardDidShowNotification]
+            [NSNotification.Name.UIKeyboardWillShow.rawValue, NSNotification.Name.UIKeyboardDidShow.rawValue]
         )
     }
     
     func removeKeyboardNotificationsChangeFrame() {
         removeNotificationNames(
-            [UIKeyboardWillChangeFrameNotification, UIKeyboardDidChangeFrameNotification]
+            [NSNotification.Name.UIKeyboardWillChangeFrame.rawValue, NSNotification.Name.UIKeyboardDidChangeFrame.rawValue]
         )
     }
     
-    private func removeNotificationNames(names: [String]) {
-        let nc = NSNotificationCenter.defaultCenter()
+    fileprivate func removeNotificationNames(_ names: [String]) {
+        let nc = NotificationCenter.default
         for name in names {
-            nc.removeObserver(self, name: name, object: nil )
+            nc.removeObserver(self, name: NSNotification.Name(rawValue: name), object: nil )
         }
     }
     
-    func keyboardWillShow(notification: NSNotification) { }
-    func keyboardDidShow(notification: NSNotification) { }
-    func keyboardWillHide(notification: NSNotification) { }
-    func keyboardDidHide(notification: NSNotification) { }
-    func keyboardWillChangeFrame(notification: NSNotification) { }
-    func keyboardDidChangeFrame(notification: NSNotification) { }
+    func keyboardWillShow(_ notification: Notification) { }
+    func keyboardDidShow(_ notification: Notification) { }
+    func keyboardWillHide(_ notification: Notification) { }
+    func keyboardDidHide(_ notification: Notification) { }
+    func keyboardWillChangeFrame(_ notification: Notification) { }
+    func keyboardDidChangeFrame(_ notification: Notification) { }
 }

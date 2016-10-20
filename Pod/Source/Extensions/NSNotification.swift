@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: + Keyboard
-public extension NSNotification {
+public extension Notification {
     
     public var keyboardFrameBegin: CGRect {
         return frameValueForKey(UIKeyboardFrameBeginUserInfoKey)
@@ -19,23 +19,23 @@ public extension NSNotification {
         return frameValueForKey(UIKeyboardFrameEndUserInfoKey)
     }
     
-    private func frameValueForKey(key: String) -> CGRect {
+    fileprivate func frameValueForKey(_ key: String) -> CGRect {
         guard
             let userInfo = userInfo,
-            let keyboardSize = (userInfo[key] as? NSValue)?.CGRectValue(),
-            let window = UIApplication.sharedApplication().keyWindow
+            let keyboardSize = (userInfo[key] as? NSValue)?.cgRectValue,
+            let window = UIApplication.shared.keyWindow
             else {
-                return CGRectZero
+                return CGRect.zero
         }
         
-        return window.convertRect(keyboardSize, toView:nil)
+        return window.convert(keyboardSize, to:nil)
     }
     
-    public var keyboardAnimationDuration: NSTimeInterval {
+    public var keyboardAnimationDuration: TimeInterval {
         
         guard
             let userInfo = userInfo,
-            let time = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSTimeInterval)
+            let time = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval)
             else {
                 return 0
         }
@@ -46,11 +46,11 @@ public extension NSNotification {
     public var keyboardAnimationCurve: UIViewAnimationOptions {
         guard
             let userInfo = userInfo,
-            let rawValue = userInfo[UIKeyboardAnimationCurveUserInfoKey]?.integerValue
+            let rawValue = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as? Int)
             else {
                 return []
         }
         
-        return [(UIViewAnimationOptions(rawValue: UInt(rawValue << 16))), .BeginFromCurrentState]
+        return [(UIViewAnimationOptions(rawValue: UInt(rawValue << 16))), .beginFromCurrentState]
     }
 }

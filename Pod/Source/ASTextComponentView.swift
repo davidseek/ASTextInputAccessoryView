@@ -11,7 +11,7 @@ import PMKVObserver
 import ASPlaceholderTextView
 
 
-public class ASTextComponentView: UIView {
+open class ASTextComponentView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,7 +28,7 @@ public class ASTextComponentView: UIView {
     /**
      Standard height of bar without content.
      */
-    public var minimumHeight: CGFloat = 44 {
+    open var minimumHeight: CGFloat = 44 {
         didSet {
             parentView?.reloadHeight()
         }
@@ -40,7 +40,7 @@ public class ASTextComponentView: UIView {
         _ = KVObserver(object: textView, keyPath: "contentSize") {[weak self] object, _, _ in
             // Awaits changes to textView otherwise will show error:
             // requesting caretRectForPosition: while the NSTextStorage has oustanding changes {x, y}
-            NSOperationQueue.mainQueue().addOperationWithBlock({ 
+            OperationQueue.main.addOperation({ 
                 self?.parentView?.reloadHeight()
             })
         }
@@ -53,23 +53,23 @@ public class ASTextComponentView: UIView {
      
      - Note: For automatic resizing, update the font var on the accessory view.
      */
-    public let textView = ASPlaceholderTextView(frame: CGRectZero, textContainer: nil)
+    open let textView = ASPlaceholderTextView(frame: CGRect.zero, textContainer: nil)
     
     /**
      Container view for a custom button view autoresized to the left of the textView.
      */
-    public let leftButtonContainerView = UIView()
+    open let leftButtonContainerView = UIView()
     
     /**
      Container view for a custom button view autoresized to the right of the textView.
      */
-    public let rightButtonContainerView = UIView()
+    open let rightButtonContainerView = UIView()
     
     
     /**
      Space the textView and button views keep from surrounding views.
      */
-    public var margin: CGFloat = 7 {
+    open var margin: CGFloat = 7 {
         didSet {
             updateContentConstraints()
             parentView?.reloadHeight()
@@ -81,16 +81,16 @@ public class ASTextComponentView: UIView {
     /**
      Resets textContainerInset based off the text line height and margin.
      */
-    public func resetTextContainerInset() {
+    open func resetTextContainerInset() {
         let inset = (contentHeight - margin * 2 - textView.lineHeight)/2
         textView.textContainerInset = UIEdgeInsets(top: inset, left: 3, bottom: inset, right: 3)
     }
     
     func setupMessageView() {
         
-        backgroundColor = UIColor.clearColor()
-        leftButtonContainerView.backgroundColor = UIColor.clearColor()
-        rightButtonContainerView.backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
+        leftButtonContainerView.backgroundColor = UIColor.clear
+        rightButtonContainerView.backgroundColor = UIColor.clear
         
         addSubview(leftButtonContainerView)
         addSubview(rightButtonContainerView)
@@ -98,10 +98,10 @@ public class ASTextComponentView: UIView {
         
         textView.allowImages = true
         textView.placeholder = "Text Message"
-        textView.placeholderColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.7)
-        textView.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        textView.placeholderColor = UIColor.lightGray.withAlphaComponent(0.7)
+        textView.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
         textView.layer.cornerRadius = 5.0
-        textView.layer.borderColor = UIColor.lightGrayColor().CGColor
+        textView.layer.borderColor = UIColor.lightGray.cgColor
         textView.layer.borderWidth = 0.5
         textView.delegate = self
         
@@ -114,42 +114,42 @@ public class ASTextComponentView: UIView {
         
         removeConstraints(constraints)
         
-        leftButtonContainerView.autoLayoutToSuperview([.Left, .Bottom], inset: margin)
-        rightButtonContainerView.autoLayoutToSuperview([.Right, .Bottom], inset: margin)
-        textView.autoLayoutToSuperview([.Top, .Bottom], inset: margin)
+        leftButtonContainerView.autoLayoutToSuperview([.left, .bottom], inset: margin)
+        rightButtonContainerView.autoLayoutToSuperview([.right, .bottom], inset: margin)
+        textView.autoLayoutToSuperview([.top, .bottom], inset: margin)
         
         let left = NSLayoutConstraint(
             item: textView,
-            attribute: .Left,
-            relatedBy: .Equal,
+            attribute: .left,
+            relatedBy: .equal,
             toItem: leftButtonContainerView,
-            attribute: .Right,
+            attribute: .right,
             multiplier: 1,
             constant: margin
         )
         let right = NSLayoutConstraint(
             item: textView,
-            attribute: .Right,
-            relatedBy: .Equal,
+            attribute: .right,
+            relatedBy: .equal,
             toItem: rightButtonContainerView,
-            attribute: .Left,
+            attribute: .left,
             multiplier: 1,
             constant: -margin
         )
         addConstraint(left)
         addConstraint(right)
         
-        textView.setContentHuggingPriority(UILayoutPriorityDefaultLow, forAxis: .Horizontal)
-        textView.setContentHuggingPriority(UILayoutPriorityDefaultLow, forAxis: .Vertical)
-        textView.setContentCompressionResistancePriority(UILayoutPriorityDefaultLow, forAxis: .Horizontal)
-        textView.setContentCompressionResistancePriority(UILayoutPriorityDefaultLow, forAxis: .Vertical)
+        textView.setContentHuggingPriority(UILayoutPriorityDefaultLow, for: .horizontal)
+        textView.setContentHuggingPriority(UILayoutPriorityDefaultLow, for: .vertical)
+        textView.setContentCompressionResistancePriority(UILayoutPriorityDefaultLow, for: .horizontal)
+        textView.setContentCompressionResistancePriority(UILayoutPriorityDefaultLow, for: .vertical)
         
         for view in [leftButtonContainerView, rightButtonContainerView] {
             
             view.addHeightConstraint(minimumHeight - margin * 2)
             view.addWidthConstraint(0, priority: UILayoutPriorityDefaultLow)
-            view.setContentHuggingPriority(UILayoutPriorityRequired, forAxis: .Horizontal)
-            view.setContentCompressionResistancePriority(UILayoutPriorityDefaultHigh, forAxis: .Horizontal)
+            view.setContentHuggingPriority(UILayoutPriorityRequired, for: .horizontal)
+            view.setContentCompressionResistancePriority(UILayoutPriorityDefaultHigh, for: .horizontal)
         }
     }
     
@@ -159,19 +159,19 @@ public class ASTextComponentView: UIView {
     /**
      Standard "Send" button set as the rightButton.
      */
-    public let defaultSendButton: UIButton = UIButton(type: .Custom)
+    open let defaultSendButton: UIButton = UIButton(type: .custom)
     
     /**
      Sets the standard "Send" button as the rightButton.
      */
-    public func addStandardSendButton() {
+    open func addStandardSendButton() {
         
-        defaultSendButton.setTitle("Send", forState: .Normal)
-        defaultSendButton.setTitleColor(tintColor, forState: .Normal)
-        defaultSendButton.setTitleColor(tintColor.colorWithAlphaComponent(0.5), forState: .Highlighted)
-        defaultSendButton.setTitleColor(UIColor.lightGrayColor().colorWithAlphaComponent(0.5), forState: .Disabled)
-        defaultSendButton.titleLabel?.font = UIFont.boldSystemFontOfSize(17)
-        defaultSendButton.enabled = false
+        defaultSendButton.setTitle("Send", for: UIControlState())
+        defaultSendButton.setTitleColor(tintColor, for: UIControlState())
+        defaultSendButton.setTitleColor(tintColor.withAlphaComponent(0.5), for: .highlighted)
+        defaultSendButton.setTitleColor(UIColor.lightGray.withAlphaComponent(0.5), for: .disabled)
+        defaultSendButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        defaultSendButton.isEnabled = false
         
         rightButton = defaultSendButton
     }
@@ -179,7 +179,7 @@ public class ASTextComponentView: UIView {
     /**
      Sets the left button view and removes any existing subviews.
      */
-    public weak var leftButton: UIView? {
+    open weak var leftButton: UIView? {
         didSet {
             leftButtonContainerView.subviews.forEach({ $0.removeFromSuperview() })
             
@@ -193,7 +193,7 @@ public class ASTextComponentView: UIView {
     /**
      Sets the right button view and removes any existing subviews.
      */
-    public weak var rightButton: UIView? {
+    open weak var rightButton: UIView? {
         didSet {
             rightButtonContainerView.subviews.forEach({ $0.removeFromSuperview() })
             
@@ -218,7 +218,7 @@ extension ASTextComponentView: ASComponent {
             return nextBarHeight
         }
         
-        let textViewSize = textView.sizeThatFits(CGSizeMake(textView.frame.size.width, CGFloat.max))
+        let textViewSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
         let textViewMargins = textView.frame.origin.y + (textView.superview!.frame.size.height - textView.frame.size.height - textView.frame.origin.y)
         nextBarHeight = textViewSize.height + textViewMargins
         
@@ -229,11 +229,11 @@ extension ASTextComponentView: ASComponent {
         return nextBarHeight
     }
     
-    public func animatedLayout(newheight: CGFloat) {
+    public func animatedLayout(_ newheight: CGFloat) {
         textView.scrollToBottomText()
     }
     
-    public func postAnimationLayout(newheight: CGFloat) {
+    public func postAnimationLayout(_ newheight: CGFloat) {
         textView.layoutIfNeeded()
     }
     
@@ -265,9 +265,9 @@ public extension ASTextComponentView {
 
 extension ASTextComponentView: UITextViewDelegate {
     
-    public func textViewDidChange(textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         if textView == self.textView {
-            defaultSendButton.enabled = textView.text.characters.count != 0
+            defaultSendButton.isEnabled = textView.text.characters.count != 0
         }
     }
 }

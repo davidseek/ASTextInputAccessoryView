@@ -10,7 +10,7 @@ import UIKit
 
 public extension UICollectionViewLayoutAttributes {
     
-    func alignFrameWithInset(inset: UIEdgeInsets) {
+    func alignFrameWithInset(_ inset: UIEdgeInsets) {
         var frame = self.frame
         frame.origin.x = inset.left
         self.frame = frame
@@ -18,14 +18,14 @@ public extension UICollectionViewLayoutAttributes {
 }
 
 public protocol LayoutAlignment {
-    func insetsForIndexPath(indexPath: NSIndexPath) -> UIEdgeInsets
+    func insetsForIndexPath(_ indexPath: IndexPath) -> UIEdgeInsets
 }
 
 
 class MessagesFlowLayout: UICollectionViewFlowLayout {
     
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        guard let originalAttributes = super.layoutAttributesForElementsInRect(rect) else {
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        guard let originalAttributes = super.layoutAttributesForElements(in: rect) else {
             return nil
         }
         
@@ -36,8 +36,8 @@ class MessagesFlowLayout: UICollectionViewFlowLayout {
                 continue
             }
             
-            if let index = updatedAttributes.indexOf(attributes),
-                let layout = layoutAttributesForItemAtIndexPath(attributes.indexPath) {
+            if let index = updatedAttributes.index(of: attributes),
+                let layout = layoutAttributesForItem(at: attributes.indexPath) {
                 updatedAttributes[index] = layout
             }
         }
@@ -45,9 +45,9 @@ class MessagesFlowLayout: UICollectionViewFlowLayout {
         return updatedAttributes
     }
     
-    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         
-        let currentItemAttributes = super.layoutAttributesForItemAtIndexPath(indexPath)?.copy() as? UICollectionViewLayoutAttributes
+        let currentItemAttributes = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes
         
         let sectionInset = evaluatedSectionInsetForItemAtIndexPath(indexPath)
         
@@ -56,21 +56,21 @@ class MessagesFlowLayout: UICollectionViewFlowLayout {
         return currentItemAttributes
     }
     
-    func evaluatedMinimumInteritemSpacingForItemAtIndex(index: Int) -> CGFloat {
+    func evaluatedMinimumInteritemSpacingForItemAtIndex(_ index: Int) -> CGFloat {
         if let delegate = collectionView?.delegate as? UICollectionViewDelegateFlowLayout,
-            let spacing = delegate.collectionView?(collectionView!, layout:self, minimumInteritemSpacingForSectionAtIndex: index) {
+            let spacing = delegate.collectionView?(collectionView!, layout:self, minimumInteritemSpacingForSectionAt: index) {
             return spacing
         }
         
         return self.minimumInteritemSpacing
     }
     
-    func evaluatedSectionInsetForItemAtIndexPath(indexPath: NSIndexPath) -> UIEdgeInsets {
+    func evaluatedSectionInsetForItemAtIndexPath(_ indexPath: IndexPath) -> UIEdgeInsets {
         
         if let inset = (collectionView?.delegate as? LayoutAlignment)?.insetsForIndexPath(indexPath) {
             return inset
         }
         
-        return UIEdgeInsetsZero
+        return UIEdgeInsets.zero
     }
 }

@@ -13,8 +13,8 @@ public protocol ASComponent {
     
     var contentHeight: CGFloat { get }
     var textInputView: UITextInputTraits? { get }
-    func animatedLayout(newheight: CGFloat)
-    func postAnimationLayout(newheight: CGFloat)
+    func animatedLayout(_ newheight: CGFloat)
+    func postAnimationLayout(_ newheight: CGFloat)
 }
 
 extension ASComponent where Self: UIView {

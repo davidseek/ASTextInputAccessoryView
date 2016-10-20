@@ -13,16 +13,16 @@ import UIKit
 
 public extension String {
     
-    func sizeWithFont(font: UIFont, maxWidth: CGFloat = CGFloat.max, maxHeight: CGFloat = CGFloat.max) -> CGSize {
+    func sizeWithFont(_ font: UIFont, maxWidth: CGFloat = CGFloat.greatestFiniteMagnitude, maxHeight: CGFloat = CGFloat.greatestFiniteMagnitude) -> CGSize {
         let constraint = CGSize(width: maxWidth, height: maxHeight)
         
-        let frame = self.boundingRectWithSize(
-            constraint,
-            options:[.UsesLineFragmentOrigin , .UsesFontLeading],
+        let frame = self.boundingRect(
+            with: constraint,
+            options:[.usesLineFragmentOrigin , .usesFontLeading],
             attributes:[NSFontAttributeName: font],
             context:nil
         )
         
-        return CGSizeMake(frame.size.width, frame.size.height);
+        return CGSize(width: frame.size.width, height: frame.size.height);
     }
 }

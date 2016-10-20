@@ -24,7 +24,7 @@ static void *kContext = &kContext;
 @interface PMKVObserverDeallocSpy: NSObject
 - (instancetype)initWithObserver:(PMKVObserver *)observer shouldBlock:(BOOL)flag NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
-@end
+    @end
 
 typedef NS_ENUM(uint_fast8_t, PMKVObserverState) {
     /// KVO has finished being setup and can now be cancelled
@@ -38,8 +38,8 @@ typedef NS_ENUM(uint_fast8_t, PMKVObserverState) {
     PMKVObserverStateDeregistered = 1 << 2
 };
 
-typedef void (^Callback)(id object, NSDictionary<NSString *,id> * _Nullable change, PMKVObserver *kvo);
-typedef void (^ObserverCallback)(id observer, id object, NSDictionary<NSString *,id> * _Nullable change, PMKVObserver *kvo);
+typedef void (^Callback)(id object, NSDictionary<NSKeyValueChangeKey,id> * _Nullable change, PMKVObserver *kvo);
+typedef void (^ObserverCallback)(id observer, id object, NSDictionary<NSKeyValueChangeKey,id> * _Nullable change, PMKVObserver *kvo);
 
 @implementation PMKVObserver {
     __weak id _Nullable _object;
@@ -63,74 +63,74 @@ typedef void (^ObserverCallback)(id observer, id object, NSDictionary<NSString *
     // on iOS, so we settle for a mutex.
     pthread_mutex_t _mutex;
 }
-
+    
 + (instancetype)observeObject:(id)object keyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options block:(Callback)block {
     return [[self alloc] initWithObject:object keyPath:keyPath options:options block:block];
 }
-
+    
 + (instancetype)observeObject:(id)object observer:(id)observer keyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options block:(ObserverCallback)block {
     return [[self alloc] initWithObserver:observer object:object keyPath:keyPath options:options block:block];
 }
-
+    
 - (instancetype)initWithObject:(id)object keyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options block:(Callback)block {
     if ((self = [super init])) {
         setup(self, nil, object, keyPath, options, (id)[block copy]);
     }
     return self;
 }
-
+    
 - (instancetype)initWithObserver:(id)observer object:(id)object keyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options block:(ObserverCallback)block {
     if ((self = [super init])) {
         setup(self, observer, object, keyPath, options, (id)[block copy]);
     }
     return self;
 }
-
-static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE observer, id NS_VALID_UNTIL_END_OF_SCOPE object, NSString *keyPath, NSKeyValueObservingOptions options, id callback) {
-    // NS_VALID_UNTIL_END_OF_SCOPE ensures the object/observer stay alive until we've finished the observation process
-    // We can't have either one of them dealloc before we finish with -addObserver:forKeyPath:options:context: because
-    // we can't unregister KVO until that method finishes, and we can't let the object dealloc before KVO is unregistered.
     
-    self->_observer = observer;
-    self->_hasObserver = observer != nil;
+    static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE observer, id NS_VALID_UNTIL_END_OF_SCOPE object, NSString *keyPath, NSKeyValueObservingOptions options, id callback) {
+        // NS_VALID_UNTIL_END_OF_SCOPE ensures the object/observer stay alive until we've finished the observation process
+        // We can't have either one of them dealloc before we finish with -addObserver:forKeyPath:options:context: because
+        // we can't unregister KVO until that method finishes, and we can't let the object dealloc before KVO is unregistered.
+        
+        self->_observer = observer;
+        self->_hasObserver = observer != nil;
+        
+        self->_object = object;
+        self->_unsafeObject = object;
+        self->_keyPath = [keyPath copy];
+        atomic_init(&self->_activityCount, 1);
+        self->_callback = callback;
+        int retval;
+        while ((retval = pthread_mutex_init(&self->_mutex, NULL))) {
+            NSCAssert(retval == EAGAIN, @"pthread_mutex_init: %s", strerror(retval));
+        }
+        atomic_init(&self->_state, PMKVObserverStateActive);
+        [self installDeallocSpiesForObject:object observer:observer];
+        [object addObserver:self forKeyPath:self->_keyPath options:options context:kContext];
+        if ((atomic_fetch_or_explicit(&self->_state, PMKVObserverStateSetup, memory_order_release) & PMKVObserverStateActive) == 0) {
+            // we cancelled during init, shut it down
+            [self teardown];
+        }
+    }
     
-    self->_object = object;
-    self->_unsafeObject = object;
-    self->_keyPath = [keyPath copy];
-    atomic_init(&self->_activityCount, 1);
-    self->_callback = callback;
-    int retval;
-    while ((retval = pthread_mutex_init(&self->_mutex, NULL))) {
-        NSCAssert(retval == EAGAIN, @"pthread_mutex_init: %s", strerror(retval));
-    }
-    atomic_init(&self->_state, PMKVObserverStateActive);
-    [self installDeallocSpiesForObject:object observer:observer];
-    [object addObserver:self forKeyPath:self->_keyPath options:options context:kContext];
-    if ((atomic_fetch_or_explicit(&self->_state, PMKVObserverStateSetup, memory_order_release) & PMKVObserverStateActive) == 0) {
-        // we cancelled during init, shut it down
-        [self teardown];
-    }
-}
-
 - (instancetype)init {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"-[PMKVObserver init] is not available" userInfo:nil];
 }
-
+    
 - (void)dealloc {
     int retval = pthread_mutex_destroy(&_mutex);
     if (__builtin_expect(retval, 0) != 0) {
         NSLog(@"PMKVObserver: pthread_mutex_destroy: %s", strerror(retval));
     }
 }
-
+    
 - (BOOL)isCancelled {
     return (atomic_load_explicit(&_state, memory_order_relaxed) & PMKVObserverStateActive) == 0;
 }
-
+    
 - (void)cancel {
     [self cancel:NO];
 }
-
+    
 - (void)cancel:(BOOL)shouldBlock {
     // When read load the state, if it says it's Cancellable, this means we can see the Setup flag from init.
     // But we need a synchronizes-with edge to guarantee we can also see the KVO state.
@@ -147,7 +147,7 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
         [self teardown];
     }
 }
-
+    
 - (void)teardown {
     int retval = pthread_mutex_lock(&_mutex);
     NSAssert(__builtin_expect(retval, 0) == 0, @"pthread_mutex_lock: %s", strerror(retval));
@@ -171,8 +171,8 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
     }
     [self clearDeallocSpies];
 }
-
-- (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSString *,id> *)change context:(nullable void *)context {
+    
+- (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSKeyValueChangeKey,id> *)change context:(nullable void *)context {
     if (context != kContext) {
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -212,7 +212,7 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
         ((Callback)callback)(object, change, self);
     }
 }
-
+    
 - (void)installDeallocSpiesForObject:(id)object observer:(nullable id)observer {
     PMKVObserverDeallocSpy *objectSpy = [[PMKVObserverDeallocSpy alloc] initWithObserver:self shouldBlock:YES];
     void * const key = [self deallocSpyAssociatedObjectKey];
@@ -222,7 +222,7 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
         objc_setAssociatedObject(observer, key, objectSpy, OBJC_ASSOCIATION_RETAIN);
     }
 }
-
+    
 - (void)clearDeallocSpies {
     id object = _object;
     void * const key = [self deallocSpyAssociatedObjectKey];
@@ -234,7 +234,7 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
         objc_setAssociatedObject(observer, key, nil, OBJC_ASSOCIATION_RETAIN);
     }
 }
-
+    
 - (void *)deallocSpyAssociatedObjectKey {
     // We could return `self`, but that runs the risk of client code also trying to use us as a key
     // (though that's rather unlikely).
@@ -242,7 +242,7 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
     // we'll go with the first one.
     return &_object;
 }
-@end
+    @end
 
 @implementation PMKVObserverDeallocSpy {
     PMKVObserver * _Nonnull _observer;
@@ -255,10 +255,10 @@ static void setup(PMKVObserver *self, id _Nullable NS_VALID_UNTIL_END_OF_SCOPE o
     }
     return self;
 }
-
+    
 - (void)dealloc {
     [_observer cancel:_shouldBlock];
 }
-@end
+    @end
 
 NS_ASSUME_NONNULL_END

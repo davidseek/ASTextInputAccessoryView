@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -12,10 +13,8 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WSB-tl-tF6">
-                    <rect key="frame" x="0.0" y="156" width="379" height="44"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cYO-D9-fgD">
-                            <rect key="frame" x="7" y="0.0" width="40" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="cIC-qc-zL1"/>
                             </constraints>
@@ -26,17 +25,16 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cox-ji-fem">
-                            <rect key="frame" x="326" y="0.0" width="46" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="aAR-Fh-Kdw"/>
                                 <constraint firstAttribute="height" constant="40" id="wdL-GX-d5u"/>
                             </constraints>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <state key="normal" title="Select">
-                                <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <state key="selected" title="Cancel">
-                                <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <variation key="default">
                                 <mask key="constraints">
@@ -49,11 +47,10 @@
                             </connections>
                         </button>
                         <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Maybe you want to search?" translatesAutoresizingMaskIntoConstraints="NO" id="djJ-cU-Sp9">
-                            <rect key="frame" x="47" y="0.0" width="279" height="44"/>
                             <textInputTraits key="textInputTraits"/>
                         </searchBar>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="djJ-cU-Sp9" firstAttribute="centerY" secondItem="WSB-tl-tF6" secondAttribute="centerY" id="11t-1v-fP3"/>
                         <constraint firstItem="djJ-cU-Sp9" firstAttribute="leading" secondItem="cYO-D9-fgD" secondAttribute="trailing" id="4ef-vt-dn8"/>
@@ -68,11 +65,9 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bYf-iN-ZHW">
-                    <rect key="frame" x="0.0" y="0.0" width="379" height="156"/>
                     <subviews>
                         <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="50" verticalCompressionResistancePriority="50" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="SWq-aY-ofB">
-                            <rect key="frame" x="0.0" y="7" width="379" height="149"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="149" id="yNf-7v-4Lt"/>
                             </constraints>
@@ -93,7 +88,7 @@
                             </connections>
                         </collectionView>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="bottom" secondItem="SWq-aY-ofB" secondAttribute="bottom" id="PYE-MX-f53"/>
                         <constraint firstAttribute="trailing" secondItem="SWq-aY-ofB" secondAttribute="trailing" id="VWw-zB-EZh"/>
@@ -102,7 +97,7 @@
                     </constraints>
                 </view>
             </subviews>
-            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="WSB-tl-tF6" secondAttribute="trailing" id="2Vf-1D-xKz"/>
                 <constraint firstItem="WSB-tl-tF6" firstAttribute="top" secondItem="bYf-iN-ZHW" secondAttribute="bottom" id="6P8-jr-qex"/>

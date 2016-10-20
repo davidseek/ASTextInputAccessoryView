@@ -8,17 +8,17 @@
 
 import Foundation
 
-extension Dictionary where Key : NSDate, Value: _ArrayType, Value.Generator.Element: Message {
+extension Dictionary where Key: NSDate, Value: _ArrayProtocol, Value.Iterator.Element: Message {
     
     var sortedKeys: [Key] {
-        return keys.sort({ $0.timeIntervalSince1970 < $1.timeIntervalSince1970})
+        return keys.sorted(by: { $0.timeIntervalSince1970 < $1.timeIntervalSince1970})
     }
     
-    func itemForIndexPath(indexPath: NSIndexPath) -> Message {
-        return self[sortedKeys[indexPath.section]]![indexPath.item]
+    func itemForIndexPath(_ indexPath: IndexPath) -> Message {
+        return self[sortedKeys[(indexPath as NSIndexPath).section]]![(indexPath as NSIndexPath).item]
     }
     
-    func arrayForIndex(section: Int) -> [Message] {
+    func arrayForIndex(_ section: Int) -> [Message] {
         return self[sortedKeys[section]] as! [Message]
     }
 }

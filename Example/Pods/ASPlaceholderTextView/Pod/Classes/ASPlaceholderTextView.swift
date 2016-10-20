@@ -9,13 +9,13 @@
 import UIKit
 
 @IBDesignable
-public class ASPlaceholderTextView: UITextView {
+open class ASPlaceholderTextView: UITextView {
     
-    public var allowImages: Bool = false
+    open var allowImages: Bool = false
     
-    public var maximumImageSize: CGSize = CGSizeMake(UIScreen.mainScreen().bounds.width/2, CGFloat.max)
+    open var maximumImageSize: CGSize = CGSize(width: UIScreen.main.bounds.width/2, height: CGFloat.greatestFiniteMagnitude)
     
-    @IBInspectable public var placeholder: String? {
+    @IBInspectable open var placeholder: String? {
         set {
             placeholderLabel.text = newValue
         }
@@ -24,7 +24,7 @@ public class ASPlaceholderTextView: UITextView {
         }
     }
     
-    @IBInspectable public var placeholderColor: UIColor? {
+    @IBInspectable open var placeholderColor: UIColor? {
         set {
             placeholderLabel.textColor = newValue
         }
@@ -33,7 +33,7 @@ public class ASPlaceholderTextView: UITextView {
         }
     }
     
-    private weak var secondaryDelegate: UITextViewDelegate?
+    fileprivate weak var secondaryDelegate: UITextViewDelegate?
     
     public override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -49,15 +49,15 @@ public class ASPlaceholderTextView: UITextView {
     var width: NSLayoutConstraint?
     var top: NSLayoutConstraint?
     
-    public var placeholderLabel: UILabel = UILabel()
+    open var placeholderLabel: UILabel = UILabel()
     
     func setupPlaceholderLabel() {
         
-        placeholderLabel.userInteractionEnabled = false
+        placeholderLabel.isUserInteractionEnabled = false
         placeholderLabel.textColor = placeholderColor
         placeholderLabel.text = placeholder
-        placeholderLabel.backgroundColor = UIColor.clearColor()
-        placeholderLabel.textColor = UIColor.lightGrayColor()
+        placeholderLabel.backgroundColor = UIColor.clear
+        placeholderLabel.textColor = UIColor.lightGray
         placeholderLabel.numberOfLines = 0
         placeholderLabel.font = font
         
@@ -71,30 +71,30 @@ public class ASPlaceholderTextView: UITextView {
         
         left = NSLayoutConstraint(
             item: placeholderLabel,
-            attribute: .Left,
-            relatedBy: .Equal,
+            attribute: .left,
+            relatedBy: .equal,
             toItem: self,
-            attribute: .Left,
+            attribute: .left,
             multiplier: 1,
             constant: textContainerInset.left + offset
         )
         
         width = NSLayoutConstraint(
             item: placeholderLabel,
-            attribute: .Width,
-            relatedBy: .Equal,
+            attribute: .width,
+            relatedBy: .equal,
             toItem: self,
-            attribute: .Width,
+            attribute: .width,
             multiplier: 1,
             constant: -(textContainerInset.right + offset + textContainerInset.left + offset)
         )
         
         top = NSLayoutConstraint(
             item: placeholderLabel,
-            attribute: .Top,
-            relatedBy: .Equal,
+            attribute: .top,
+            relatedBy: .equal,
             toItem: self,
-            attribute: .Top,
+            attribute: .top,
             multiplier: 1,
             constant: textContainerInset.top
         )
@@ -115,10 +115,10 @@ public class ASPlaceholderTextView: UITextView {
     
     func refreshLabelHidden() {
         if text == "" || text == nil {
-            placeholderLabel.hidden = false
+            placeholderLabel.isHidden = false
             return
         } else {
-            placeholderLabel.hidden = true
+            placeholderLabel.isHidden = true
         }
     }
 }
@@ -126,7 +126,7 @@ public class ASPlaceholderTextView: UITextView {
 // MARK: Forwarding Delegate
 public extension ASPlaceholderTextView {
     
-    override var delegate: UITextViewDelegate? {
+    override open var delegate: UITextViewDelegate? {
         set {
             secondaryDelegate = newValue
         }
@@ -135,17 +135,17 @@ public extension ASPlaceholderTextView {
         }
     }
     
-    override func respondsToSelector(aSelector: Selector) -> Bool {
-        return super.respondsToSelector(aSelector) || secondaryDelegate?.respondsToSelector(aSelector) == true
+    override open func responds(to aSelector: Selector) -> Bool {
+        return super.responds(to: aSelector) || secondaryDelegate?.responds(to: aSelector) == true
     }
     
-    override func forwardingTargetForSelector(aSelector: Selector) -> AnyObject? {
+    override open func forwardingTarget(for aSelector: Selector) -> Any? {
         
-        if (secondaryDelegate?.respondsToSelector(aSelector) == true) {
+        if (secondaryDelegate?.responds(to: aSelector) == true) {
             return secondaryDelegate
         }
         
-        return super.forwardingTargetForSelector(aSelector)
+        return super.forwardingTarget(for: aSelector)
     }
 }
 
@@ -153,19 +153,19 @@ public extension ASPlaceholderTextView {
 // MARK: Override text setters
 public extension ASPlaceholderTextView {
     
-    public override var font: UIFont? {
+    open override var font: UIFont? {
         didSet{
             placeholderLabel.font = font
         }
     }
     
-    public override var textContainerInset: UIEdgeInsets {
+    open override var textContainerInset: UIEdgeInsets {
         didSet {
             updateLabelConstraints()
         }
     }
     
-    public override var text: String! {
+    open override var text: String! {
         didSet {
             refreshLabelHidden()
             
@@ -173,7 +173,7 @@ public extension ASPlaceholderTextView {
         }
     }
     
-    public override var attributedText: NSAttributedString! {
+    open override var attributedText: NSAttributedString! {
         didSet {
             refreshLabelHidden()
             
@@ -181,7 +181,7 @@ public extension ASPlaceholderTextView {
         }
     }
     
-    public override var textAlignment: NSTextAlignment {
+    open override var textAlignment: NSTextAlignment {
         didSet {
             placeholderLabel.textAlignment = textAlignment
         }
@@ -191,7 +191,7 @@ public extension ASPlaceholderTextView {
 // MARK: UITextView Delegate
 extension ASPlaceholderTextView: UITextViewDelegate {
     
-    public func textViewDidChange(textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         
         refreshLabelHidden()
         
@@ -203,7 +203,7 @@ extension ASPlaceholderTextView: UITextViewDelegate {
 
 public extension ASPlaceholderTextView {
     
-    private func scaledImage(image: UIImage) -> UIImage {
+    fileprivate func scaledImage(_ image: UIImage) -> UIImage {
         
         var scaleFactor: CGFloat = 1
         
@@ -220,11 +220,11 @@ public extension ASPlaceholderTextView {
             scaleFactor = 1
         }
         
-        return UIImage(CGImage: image.CGImage!, scale: scaleFactor, orientation: .Up)
+        return UIImage(cgImage: image.cgImage!, scale: scaleFactor, orientation: .up)
     }
     
-    public override func paste(sender: AnyObject?) {
-        let pasteboard = UIPasteboard.generalPasteboard()
+    open override func paste(_ sender: Any?) {
+        let pasteboard = UIPasteboard.general
         
         if allowImages, let images = pasteboard.images {
             insertImages(images)
@@ -234,21 +234,21 @@ public extension ASPlaceholderTextView {
         }
     }
     
-    public func insertImages(images: [UIImage], range: NSRange? = nil) {
+    public func insertImages(_ images: [UIImage], range: NSRange? = nil) {
         
         let imageAttrString = NSMutableAttributedString()
         for image in images {
             let textAttachment = NSTextAttachment()
             textAttachment.image = scaledImage(image)
             
-            imageAttrString.appendAttributedString(NSAttributedString(attachment: textAttachment))
-            imageAttrString.appendAttributedString(NSAttributedString(string: "\n\n"))
+            imageAttrString.append(NSAttributedString(attachment: textAttachment))
+            imageAttrString.append(NSAttributedString(string: "\n\n"))
         }
         
         insertAttributedString(imageAttrString, range: range)
     }
     
-    public func insertAttributedString(string: NSAttributedString, range: NSRange? = nil, overrideFont: Bool = true) {
+    public func insertAttributedString(_ string: NSAttributedString, range: NSRange? = nil, overrideFont: Bool = true) {
         
         var range = range
         if range == nil {
@@ -256,7 +256,7 @@ public extension ASPlaceholderTextView {
         }
         
         let mutableAttrString = attributedText.mutableCopy() as! NSMutableAttributedString
-        mutableAttrString.replaceCharactersInRange(range!, withAttributedString: string)
+        mutableAttrString.replaceCharacters(in: range!, with: string)
         
         if overrideFont, let font = font {
             mutableAttrString.addAttribute(NSFontAttributeName, value: font, range: NSRange(location: 0, length: mutableAttrString.length))

@@ -11,26 +11,26 @@ import UIKit
 
 public extension UITableView {
     
-    func scrollToLastCell(atScrollPosition: UITableViewScrollPosition = .None, animated: Bool = true) {
+    func scrollToLastCell(_ atScrollPosition: UITableViewScrollPosition = .none, animated: Bool = true) {
         
         guard let lastIndexPath = lastIndexPath else {
                 return
         }
         
-        scrollToRowAtIndexPath(lastIndexPath, atScrollPosition: atScrollPosition, animated: animated)
+        scrollToRow(at: lastIndexPath, at: atScrollPosition, animated: animated)
     }
     
     
-    public var lastIndexPath: NSIndexPath? {
+    public var lastIndexPath: IndexPath? {
         
         guard
-            let numberOfSections = dataSource?.numberOfSectionsInTableView?(self),
+            let numberOfSections = dataSource?.numberOfSections?(in: self),
             let numberOfRows = dataSource?.tableView(self, numberOfRowsInSection: numberOfSections - 1)
-            where numberOfRows > 0 else {
+            , numberOfRows > 0 else {
                 return nil
         }
         
-        return NSIndexPath(forRow: numberOfRows - 1, inSection: numberOfSections - 1)
+        return IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
     }
 }
 

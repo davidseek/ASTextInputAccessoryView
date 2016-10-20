@@ -13,7 +13,7 @@ import Foundation
 
 public extension UIView {
     
-    func autoLayoutToSuperview(attributes: [NSLayoutAttribute] = [.Left, .Right, .Top, .Bottom], inset: CGFloat = 0) -> [NSLayoutConstraint] {
+    func autoLayoutToSuperview(_ attributes: [NSLayoutAttribute] = [.left, .right, .top, .bottom], inset: CGFloat = 0) -> [NSLayoutConstraint] {
         
         var constraints: [NSLayoutConstraint] = []
         translatesAutoresizingMaskIntoConstraints = false
@@ -22,9 +22,9 @@ public extension UIView {
             
             var constant = inset
             switch attribute {
-            case .Right:
+            case .right:
                 constant = -inset
-            case .Bottom:
+            case .bottom:
                 constant = -inset
             default:
                 break
@@ -33,7 +33,7 @@ public extension UIView {
             let constraint = NSLayoutConstraint(
                 item: self,
                 attribute: attribute,
-                relatedBy: .Equal,
+                relatedBy: .equal,
                 toItem: self.superview,
                 attribute: attribute,
                 multiplier: 1,
@@ -46,24 +46,24 @@ public extension UIView {
         return constraints
     }
     
-    func addHeightConstraint(constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
+    func addHeightConstraint(_ constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
         
-        return addSizeConstraint(.Height, constant: constant, priority: priority)
+        return addSizeConstraint(.height, constant: constant, priority: priority)
     }
     
-    func addWidthConstraint(constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
+    func addWidthConstraint(_ constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
         
-        return addSizeConstraint(.Width, constant: constant, priority: priority)
+        return addSizeConstraint(.width, constant: constant, priority: priority)
     }
     
-    private func addSizeConstraint(attribute: NSLayoutAttribute, constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
+    fileprivate func addSizeConstraint(_ attribute: NSLayoutAttribute, constant: CGFloat, priority: UILayoutPriority = UILayoutPriorityDefaultHigh) -> NSLayoutConstraint {
         
         let constraint = NSLayoutConstraint(
             item: self,
             attribute: attribute,
-            relatedBy: .Equal,
+            relatedBy: .equal,
             toItem: nil,
-            attribute: .NotAnAttribute,
+            attribute: .notAnAttribute,
             multiplier: 1,
             constant: constant
         )

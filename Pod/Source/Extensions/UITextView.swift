@@ -20,18 +20,18 @@ public extension UITextView {
     }
     
     public var sizeThatFitsWidth: CGSize {
-        return sizeThatFits(CGSizeMake(frame.size.width, CGFloat.max))
+        return sizeThatFits(CGSize(width: frame.size.width, height: CGFloat.greatestFiniteMagnitude))
     }
     
     public var attributedTextHeight: CGFloat {
-        return attributedText.boundingRectWithSize(CGSizeMake(frame.size.width - textContainerInset.left - textContainerInset.right, CGFloat.max), options:[.UsesLineFragmentOrigin, .UsesFontLeading], context:nil).height
+        return attributedText.boundingRect(with: CGSize(width: frame.size.width - textContainerInset.left - textContainerInset.right, height: CGFloat.greatestFiniteMagnitude), options:[.usesLineFragmentOrigin, .usesFontLeading], context:nil).height
     }
     
     public var lineHeight: CGFloat {
         guard let font = font else {
             return 0
         }
-        return "line".sizeWithFont(font, maxWidth:CGFloat.max, maxHeight:CGFloat.max).height
+        return "line".sizeWithFont(font, maxWidth:CGFloat.greatestFiniteMagnitude, maxHeight:CGFloat.greatestFiniteMagnitude).height
     }
     
     public var numberOfRows: Int {
