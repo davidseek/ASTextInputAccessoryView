@@ -5,12 +5,6 @@
 [![License](https://img.shields.io/cocoapods/l/ASTextInputAccessoryView.svg?style=flat)](http://cocoapods.org/pods/ASTextInputAccessoryView)
 [![Platform](https://img.shields.io/cocoapods/p/ASTextInputAccessoryView.svg?style=flat)](http://cocoapods.org/pods/ASTextInputAccessoryView)
 
-## Usage
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Requirements
-
 ## Installation
 
 ASTextInputAccessoryView is available through [CocoaPods](http://cocoapods.org). To install
