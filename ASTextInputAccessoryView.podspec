@@ -29,6 +29,6 @@ Powered by ASPlaceholderTextView and PMKVObserver
 
     s.source_files = 'Pod/Source/**/*'
     s.frameworks = 'UIKit'
-    s.dependency 'ASPlaceholderTextView', '~> 0.1'
+    s.dependency 'ASPlaceholderTextView', '~> 0.1', :git => "https://github.com/davidseek/ASPlaceholderTextView.git"
     s.dependency 'PMKVObserver', '~> 2.0'
 end
